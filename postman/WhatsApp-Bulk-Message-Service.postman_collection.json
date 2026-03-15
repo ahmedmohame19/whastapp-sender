@@ -1,0 +1,115 @@
+{
+  "info": {
+    "name": "WhatsApp Bulk Message Service",
+    "description": "API for sending WhatsApp messages to Egyptian phone numbers from Excel (csv/Applicants.xlsx).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:6003"
+    }
+  ],
+  "item": [
+    {
+      "name": "Service",
+      "item": [
+        {
+          "name": "Start WhatsApp service",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/api/whatsapp/start",
+            "description": "Start the WhatsApp client (Chrome will open)."
+          }
+        },
+        {
+          "name": "Get QR code",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/whatsapp/qr",
+            "description": "Get QR code to scan with WhatsApp. Returns base64 QR or status 'ready' if already connected."
+          }
+        },
+        {
+          "name": "Get status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/whatsapp/status",
+            "description": "Check if WhatsApp client is ready, has QR, or not started."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Excel / Phones",
+      "item": [
+        {
+          "name": "List sheets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/whatsapp/sheets",
+            "description": "List all sheet (tab) names in csv/Applicants.xlsx."
+          }
+        },
+        {
+          "name": "Preview phones (all / first sheet)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/whatsapp/preview-phones",
+            "description": "Preview valid and invalid Egyptian phone numbers from the first sheet."
+          }
+        },
+        {
+          "name": "Preview phones (specific sheet)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/whatsapp/preview-phones?sheet=Sheet1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "whatsapp", "preview-phones"],
+              "query": [
+                { "key": "sheet", "value": "Sheet1", "description": "Sheet name from /sheets" }
+              ]
+            },
+            "description": "Preview phones from a specific sheet. Change 'sheet' to your sheet name."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Send messages",
+      "item": [
+        {
+          "name": "Send bulk messages",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Hello! This is your message.\",\n  \"sheet\": \"Sheet1\",\n  \"delay\": 1\n}"
+            },
+            "url": "{{baseUrl}}/api/whatsapp/send-messages",
+            "description": "Send message to all valid Egyptian numbers in the Excel sheet. message = text (required). sheet = sheet name (optional, default first). delay = minutes between each message (optional, default 1)."
+          }
+        },
+        {
+          "name": "Get send status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/whatsapp/send-status",
+            "description": "Get progress of bulk send (inProgress, sent, failed, errors)."
+          }
+        }
+      ]
+    }
+  ]
+}
